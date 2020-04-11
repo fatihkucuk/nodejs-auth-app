@@ -6,7 +6,7 @@ const {
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   const { error } = validateRegisteration(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -27,9 +27,10 @@ const register = async (req, res) => {
   } catch (error) {
     res.status(400).send(error);
   }
+  next();
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { error } = validateLogin(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -42,6 +43,7 @@ const login = async (req, res) => {
 
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
   res.header('auth-token', token).send(token);
+  next();
 };
 
 module.exports.register = register;
