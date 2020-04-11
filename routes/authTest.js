@@ -1,8 +1,14 @@
 const router = require('express').Router();
-const verifyToken = require('../utils/verifyToken');
+const { protectRoute, restrictTo } = require('../controllers/authController');
+const { USER_ROLES } = require('../constants');
 
-router.get('/', verifyToken, (req, res) => {
-  res.send('OK');
-});
+router.get(
+  '/',
+  protectRoute,
+  restrictTo(USER_ROLES.admin, USER_ROLES.user),
+  (req, res) => {
+    res.send('OK');
+  }
+);
 
 module.exports = router;

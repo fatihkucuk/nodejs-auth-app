@@ -1,13 +1,10 @@
-const {
-  User,
-  validateRegisteration,
-  validateLogin,
-} = require('../models/User');
+const { User, validateRegistration, validateLogin } = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { TOKEN_HEADER_KEY } = require('../constants');
 
 const register = async (req, res, next) => {
-  const { error } = validateRegisteration(req.body);
+  const { error } = validateRegistration(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const emailExist = await User.findOne({ email: req.body.email });
@@ -20,7 +17,9 @@ const register = async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: hashedPassword,
+    role: req.body.role,
   });
+
   try {
     const savedUser = await user.save();
     res.send(savedUser);
@@ -41,10 +40,40 @@ const login = async (req, res, next) => {
   if (!validPassword)
     return res.status(400).send('Email or password is wrong!');
 
-  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-  res.header('auth-token', token).send(token);
+  const token = jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_SECRET
+  );
+  res.header(TOKEN_HEADER_KEY, token).send(token);
   next();
+};
+
+const protectRoute = (req, res, next) => {
+  const token = req.header(TOKEN_HEADER_KEY);
+  if (!token) return res.status(401).send('Access denied!');
+
+  try {
+    const verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
+    if (!verifiedUser) return res.status(400).send('Invalid token!');
+
+    req.user = verifiedUser;
+    next();
+  } catch (error) {
+    return res.status(400).send('Invalid token!');
+  }
+};
+
+const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    console.log(req);
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).send('You do not have permission');
+    }
+    next();
+  };
 };
 
 module.exports.register = register;
 module.exports.login = login;
+module.exports.protectRoute = protectRoute;
+module.exports.restrictTo = restrictTo;

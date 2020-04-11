@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
+const { USER_ROLES } = require('../constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -10,7 +11,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Please provide your email!'],
+    required: true,
     unique: true,
     lowercase: true,
     minlength: 1,
@@ -22,17 +23,23 @@ const userSchema = new mongoose.Schema({
     minlength: 6,
     maxlength: 1024,
   },
+  role: {
+    type: String,
+    enum: [USER_ROLES.admin, USER_ROLES.user],
+    default: USER_ROLES.user,
+  },
   createdDate: {
     type: Date,
     default: Date.now,
   },
 });
 
-const validateRegisteration = (user) => {
+const validateRegistration = (user) => {
   const schema = Joi.object({
     name: Joi.string().min(1).max(255).required(),
     email: Joi.string().min(1).max(255).email().required(),
     password: Joi.string().min(6).max(1024).required(),
+    role: Joi.string(),
   });
   return schema.validate(user);
 };
@@ -46,5 +53,5 @@ const validateLogin = (user) => {
 };
 
 module.exports.User = mongoose.model('User', userSchema);
-module.exports.validateRegisteration = validateRegisteration;
+module.exports.validateRegistration = validateRegistration;
 module.exports.validateLogin = validateLogin;
