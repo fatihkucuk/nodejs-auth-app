@@ -5,7 +5,7 @@ verifyToken = (req, res, next) => {
   if (!token) return res.status(401).send('Access denied!');
 
   try {
-    const verifiedUser = jwt.verify(token, process.env.TOKEN_SECRET);
+    const verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
     if (!verifiedUser) return res.status(400).send('Invalid token!');
 
     req.user = verifiedUser;

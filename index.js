@@ -1,26 +1,27 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
 //Import Routes
-const authRoute = require("./routes/auth");
-const authTestRoute = require("./routes/authTest");
+const authRoute = require('./routes/auth');
+const authTestRoute = require('./routes/authTest');
 
-dotenv.config();
+dotenv.config({ path: './config.env' });
 
 //Connect to DB
 mongoose.connect(
-  process.env.DB_CONNECT,
+  process.env.DB_CONNECTION_STRING,
   { useUnifiedTopology: true, useNewUrlParser: true },
-  () => console.log("Connected to DB")
+  () => console.log('Connected to DB')
 );
 
-//Middleware
+//Add Middlewares
 app.use(express.json());
 
-//Route Middlewares
-app.use("/api/user", authRoute);
-app.use("/api/auth-test", authTestRoute);
+//Add Route Middlewares
+app.use('/api/v1/users', authRoute);
+app.use('/api/v1/auth-test', authTestRoute);
 
-app.listen("3000", () => console.log("Server Works"));
+const port = process.env.PORT || '3000';
+app.listen(process.env.PORT, () => console.log('Server Works'));

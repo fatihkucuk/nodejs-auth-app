@@ -1,24 +1,26 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    require: true,
-    min: 1,
-    max: 255,
+    required: true,
+    minlength: 1,
+    maxlength: 255,
   },
   email: {
     type: String,
-    require: true,
-    min: 1,
-    max: 255,
+    required: [true, 'Please provide your email!'],
+    unique: true,
+    lowercase: true,
+    minlength: 1,
+    maxlength: 255,
   },
   password: {
     type: String,
-    require: true,
-    min: 6,
-    max: 1024,
+    required: true,
+    minlength: 6,
+    maxlength: 1024,
   },
   createdDate: {
     type: Date,
