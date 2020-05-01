@@ -1,7 +1,6 @@
 const { User, validateRegistration, validateLogin } = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { TOKEN_HEADER_KEY } = require('../constants');
 
 const register = async (req, res, next) => {
   const { error } = validateRegistration(req.body);
@@ -44,12 +43,12 @@ const login = async (req, res, next) => {
     { id: user.id, role: user.role },
     process.env.JWT_SECRET
   );
-  res.header(TOKEN_HEADER_KEY, token).send(token);
+  res.header(process.env.TOKEN_HEADER_KEY, token).send(token);
   next();
 };
 
 const protectRoute = (req, res, next) => {
-  const token = req.header(TOKEN_HEADER_KEY);
+  const token = req.header(process.env.TOKEN_HEADER_KEY);
   if (!token) return res.status(401).send('Access denied!');
 
   try {
@@ -65,7 +64,6 @@ const protectRoute = (req, res, next) => {
 
 const restrictTo = (...roles) => {
   return (req, res, next) => {
-    console.log(req);
     if (!roles.includes(req.user.role)) {
       return res.status(403).send('You do not have permission');
     }

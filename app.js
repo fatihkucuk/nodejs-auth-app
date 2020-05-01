@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 
 //Import Routes
 const authRoute = require('./routes/auth');
-const authTestRoute = require('./routes/authTest');
 
 dotenv.config({ path: './config.env' });
 
@@ -21,7 +20,5 @@ app.use(express.json());
 
 //Add Route Middlewares
 app.use('/api/v1/users', authRoute);
-app.use('/api/v1/auth-test', authTestRoute);
 
-const port = process.env.PORT || '3000';
-app.listen(port, () => console.log('Server Works'));
+module.exports = app;
