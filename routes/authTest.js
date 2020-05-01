@@ -5,7 +5,7 @@ const { USER_ROLES } = require('../constants');
 router.get(
   '/',
   protectRoute,
-  restrictTo(USER_ROLES.admin, USER_ROLES.user),
+  restrictTo(USER_ROLES.ADMIN, USER_ROLES.USER),
   (req, res) => {
     res.send('OK');
   }

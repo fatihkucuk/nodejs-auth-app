@@ -1,6 +1,6 @@
 exports.USER_ROLES = {
-  admin: 'admin',
-  user: 'user',
+  ADMIN: 'ADMIN',
+  USER: 'USER',
 };
 
 exports.TOKEN_HEADER_KEY = 'auth-token';

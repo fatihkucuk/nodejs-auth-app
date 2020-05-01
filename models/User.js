@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: [USER_ROLES.admin, USER_ROLES.user],
-    default: USER_ROLES.user,
+    enum: [USER_ROLES.ADMIN, USER_ROLES.USER],
+    default: USER_ROLES.USER,
   },
   createdDate: {
     type: Date,
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
 const validateRegistration = (user) => {
   const schema = Joi.object({
     name: Joi.string().min(1).max(255).required(),
-    email: Joi.string().min(1).max(255).email().required(),
+    email: Joi.string().min(1).max(255).email().lowercase().required(),
     password: Joi.string().min(6).max(1024).required(),
     role: Joi.string(),
   });

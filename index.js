@@ -24,4 +24,4 @@ app.use('/api/v1/users', authRoute);
 app.use('/api/v1/auth-test', authTestRoute);
 
 const port = process.env.PORT || '3000';
-app.listen(process.env.PORT, () => console.log('Server Works'));
+app.listen(port, () => console.log('Server Works'));
